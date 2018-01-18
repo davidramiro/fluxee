@@ -1,5 +1,5 @@
 # fluxee
-Changing your Yeelight smart lamp corresponding to your f.lux display temperature.
+Setting up a light scene corresponding to your f.lux display temperature. Supports up to 5 lamps at once.
 
 ## Prerequisites
 - Python
@@ -7,8 +7,8 @@ Changing your Yeelight smart lamp corresponding to your f.lux display temperatur
 - Any Yeelight/Xiaomi/Mijia Wi-Fi lamp
 
 ## Usage
-* Enable the [developer mode](https://www.yeelight.com/en_US/developer) (sometimes also called LAN mode) on your lamp in the Yeelight app.
-* Find out your lamp's IP address and put it into the config.ini file.
+* Enable the [developer mode](https://www.yeelight.com/en_US/developer) (sometimes also called LAN mode) on your lamps in the Yeelight app.
+* Find out your lamp's IP addresses and put them into the config.ini file aswell as the number of lamps you want to control.
 * In f.lux settings enter `http://127.0.0.1:8080/room_1` in the bottom URL mask as shown [here](https://i.imgur.com/ybEWdIC.png).
 * Run fluxee.py and enjoy.
 
