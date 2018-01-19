@@ -2,7 +2,8 @@
 Setting up a light scene with Yeelight smart lamps corresponding to your f.lux display temperature. Supports up to 5 lamps at once.
 
 ## Prerequisites
-- Python
+- Python 3
+- Packages: future, enum-compat
 - f.lux
 - Any Yeelight/Xiaomi/Mijia Wi-Fi lamp
 
@@ -11,6 +12,7 @@ Setting up a light scene with Yeelight smart lamps corresponding to your f.lux d
 * Find out your lamp's IP addresses and put them into the config.ini file.
 * If you know your lamp's color temperature range you should set it in the config file aswell. If you don't know it, the script will use the widest range possible but you might get an error message. It will still work, though.
 * In f.lux settings enter `http://127.0.0.1:8080/room_1` in the bottom URL mask as shown [here](https://i.imgur.com/ybEWdIC.png).
+* Make sure the packages future and enum-compat are installed (e.g. `pip install future`, ...)
 * Run fluxee.py and enjoy.
 
 
