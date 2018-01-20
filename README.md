@@ -18,8 +18,10 @@ Setting up a light scene with Yeelight smart lamps corresponding to your f.lux d
 Keep in mind that your f.lux settings might not match your lamp's capabilities. For example, my Yeelight RGBW Bulb supports 1700K to 6500K, my Mi Desk Lamp only 2700K to 6500K. On default, f.lux ranges from 1900K to 6500K, its effectiveness may vary depending on your lamp. If you're very sensitive even 2700K might not be dim enough for you to achieve full melatonin secretion.
 
 ## Credits
-Gratefully using the [Yeelight python library](https://github.com/skorokithakis/python-yeelight/) by Stavros Korokithakis.
-Copyright (c) 2016, Stavros Korokithakis
+Thanks to [ekzi](github.com/mikhail-ekzi) for providing the idea and basis behind this project!
+
+Gratefully using the [Yeelight python library](https://github.com/skorokithakis/python-yeelight/) by Stavros Korokithakis.  
+Copyright (c) 2016, Stavros Korokithakis  
 All rights reserved.
 
 ## License
