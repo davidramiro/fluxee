@@ -2,7 +2,7 @@
 Setting up a light scene with Yeelight smart lamps corresponding to your f.lux display temperature. Supports up to 5 lamps at once.
 
 ## Prerequisites
-- Python 2.7 and above
+- Python 3
 - f.lux
 - Any Yeelight/Xiaomi/Mijia Wi-Fi lamp
 
