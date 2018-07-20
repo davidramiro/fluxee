@@ -1,9 +1,10 @@
 import platform
 if platform.system() == "Windows":
-    import fcntl # If run on a Windows machine, use an alternative fcntl module
+    import fcntl  # If run on a Windows machine, use an alternative fcntl module
 from bottle import run, post, request
-from yeelight import *
+from yeelight import Bulb
 import configparser
+
 
 @post('/room_1')
 def room_handler():
@@ -117,15 +118,17 @@ def room_handler():
                         bulb.set_color_temp(mintemp5)
                         print('Reached lowest color temperature of %s Kelvin' % mintemp5)
 
-def readConfig():
+
+def main():
+    print('Welcome to fluxee by davidramiro')
     print('Reading config...')
+    checkState = True
     config = configparser.ConfigParser()
     config.read('config.ini')
-    global bulb1,bulb2,bulb3,bulb4,bulb5,mintemp1,mintemp2,mintemp3,mintemp4,mintemp5,maxtemp1,maxtemp2,maxtemp3,maxtemp4,maxtemp5,checkState
-    checkState = config.getboolean('general','CheckLampState')
-    bulb1 = config.get('lamp one','ip')
-    maxtemp1 = config.get('lamp one','MaxColorTemperature')
-    mintemp1 = config.get('lamp one','MinColorTemperature')
+    checkState = config.getboolean('general', 'CheckLampState')
+    bulb1 = config.get('lamp one', 'ip')
+    maxtemp1 = config.get('lamp one', 'MaxColorTemperature')
+    mintemp1 = config.get('lamp one', 'MinColorTemperature')
     if mintemp1 == '':
         mintemp1 = 1700
     if maxtemp1 == '':
@@ -133,10 +136,9 @@ def readConfig():
     else:
         mintemp1 = int(mintemp1)
         maxtemp1 = int(maxtemp1)
-        
-    bulb2 = config.get('lamp two','ip')
-    maxtemp2 = config.get('lamp two','MaxColorTemperature')
-    mintemp2 = config.get('lamp two','MinColorTemperature')
+    bulb2 = config.get('lamp two', 'ip')
+    maxtemp2 = config.get('lamp two', 'MaxColorTemperature')
+    mintemp2 = config.get('lamp two', 'MinColorTemperature')
     if mintemp2 == '':
         mintemp2 = 1700
     if maxtemp2 == '':
@@ -144,10 +146,9 @@ def readConfig():
     else:
         mintemp2 = int(mintemp2)
         maxtemp2 = int(maxtemp2)
-        
-    bulb3 = config.get('lamp three','ip')
-    maxtemp3 = config.get('lamp three','MaxColorTemperature')
-    mintemp3 = config.get('lamp three','MinColorTemperature')
+    bulb3 = config.get('lamp three', 'ip')
+    maxtemp3 = config.get('lamp three', 'MaxColorTemperature')
+    mintemp3 = config.get('lamp three', 'MinColorTemperature')
     if mintemp3 == '':
         mintemp3 = 1700
     if maxtemp3 == '':
@@ -155,10 +156,9 @@ def readConfig():
     else:
         mintemp3 = int(mintemp3)
         maxtemp3 = int(maxtemp3)
-        
-    bulb4 = config.get('lamp four','ip')
-    maxtemp4 = config.get('lamp four','MaxColorTemperature')
-    mintemp4 = config.get('lamp four','MinColorTemperature')
+    bulb4 = config.get('lamp four', 'ip')
+    maxtemp4 = config.get('lamp four', 'MaxColorTemperature')
+    mintemp4 = config.get('lamp four', 'MinColorTemperature')
     if mintemp4 == '':
         mintemp4 = 1700
     if maxtemp4 == '':
@@ -166,10 +166,9 @@ def readConfig():
     else:
         mintemp4 = int(mintemp4)
         maxtemp4 = int(maxtemp4)
-        
-    bulb5 = config.get('lamp five','ip')
-    maxtemp5 = config.get('lamp five','MaxColorTemperature')
-    mintemp5 = config.get('lamp five','MinColorTemperature')
+    bulb5 = config.get('lamp five', 'ip')
+    maxtemp5 = config.get('lamp five', 'MaxColorTemperature')
+    mintemp5 = config.get('lamp five', 'MinColorTemperature')
     if mintemp5 == '':
         mintemp5 = 1700
     if maxtemp5 == '':
@@ -177,16 +176,12 @@ def readConfig():
     else:
         mintemp5 = int(mintemp5)
         maxtemp5 = int(maxtemp5)
-        
-def main():
-    print('Welcome to fluxee by davidramiro')
-    readConfig()
     print('Initializing...')
     for bulbn in (bulb1, bulb2, bulb3, bulb4, bulb5):
         if bulbn != '':
             print('Initializing Yeelight at %s' % bulbn)
             bulb = Bulb(bulbn)
-            if checkState == True:
+            if checkState is True:
                 state = bulb.get_properties(requested_properties=['power'])
                 if 'off' in state['power']:
                     print('Powered off. Ignoring Yeelight at %s' % bulbn)
@@ -194,8 +189,9 @@ def main():
                 print('Turning on Yeelight at %s' % bulbn)
                 bulb.turn_on()
                 bulb.set_brightness(100)
-                   
+
     run(host='127.0.0.1', port=8080)
     print('Thank you for using fluxee. Have a good one!')
-    
+
+
 main()
