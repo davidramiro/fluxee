@@ -1,5 +1,5 @@
 # fluxee
-Setting up a light scene with Yeelight smart lamps corresponding to your f.lux display temperature. Supports up to 5 lamps at once.
+Setting up a light scene with Yeelight smart lamps corresponding to your f.lux display temperature. Supports any number of lamps simultaneously.
 
 ## Prerequisites
 - Python 3

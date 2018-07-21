@@ -23,15 +23,15 @@ def room_handler():
                 bulb = Bulb(currentbulb)
                 bulb.set_brightness(bri)
                 print('Brightness set to', bri, 'percent')
-                if mintemp < ct < maxtemp:
+                if int(mintemp) < ct < int(maxtemp):
                     bulb.set_color_temp(ct)
                     print('Color temperature set to', ct, 'Kelvin')
                 else:
-                    if ct > maxtemp:
-                        bulb.set_color_temp(maxtemp)
+                    if ct > int(maxtemp):
+                        bulb.set_color_temp(int(maxtemp))
                         print('Reached highest color temperature of', maxtemp, 'Kelvin')
-                    if ct < mintemp:
-                        bulb.set_color_temp(mntemp)
+                    if ct < int(mintemp):
+                        bulb.set_color_temp(int(mintemp))
                         print('Reached lowest color temperature of', mintemp, 'Kelvin')
 
 
@@ -40,67 +40,17 @@ def main():
     print('Reading config...')
     config = configparser.ConfigParser()
     config.read('config.ini')
-    check_state = config.getboolean('general', 'CheckLampState')
-    bulbs.append(config.get('lamp one', 'ip'))
-    maxtemp1 = config.get('lamp one', 'MaxColorTemperature')
-    mintemp1 = config.get('lamp one', 'MinColorTemperature')
-    if mintemp1 == '':
-        mintemp1 = 1700
-    if maxtemp1 == '':
-        maxtemp1 = 6500
-    else:
-        mintemp1 = int(mintemp1)
-        maxtemp1 = int(maxtemp1)
-    maxtemps.append(maxtemp1)
-    mintemps.append(mintemp1)
-    bulbs.append(config.get('lamp two', 'ip'))
-    maxtemp2 = config.get('lamp two', 'MaxColorTemperature')
-    mintemp2 = config.get('lamp two', 'MinColorTemperature')
-    if mintemp2 == '':
-        mintemp2 = 1700
-    if maxtemp2 == '':
-        maxtemp2 = 6500
-    else:
-        mintemp2 = int(mintemp2)
-        maxtemp2 = int(maxtemp2)
-    maxtemps.append(maxtemp2)
-    mintemps.append(mintemp2)
-    bulbs.append(config.get('lamp three', 'ip'))
-    maxtemp3 = config.get('lamp three', 'MaxColorTemperature')
-    mintemp3 = config.get('lamp three', 'MinColorTemperature')
-    if mintemp3 == '':
-        mintemp3 = 1700
-    if maxtemp3 == '':
-        maxtemp3 = 6500
-    else:
-        mintemp3 = int(mintemp3)
-        maxtemp3 = int(maxtemp3)
-    maxtemps.append(maxtemp3)
-    mintemps.append(mintemp3)
-    bulbs.append(config.get('lamp four', 'ip'))
-    maxtemp4 = config.get('lamp four', 'MaxColorTemperature')
-    mintemp4 = config.get('lamp four', 'MinColorTemperature')
-    if mintemp4 == '':
-        mintemp4 = 1700
-    if maxtemp4 == '':
-        maxtemp4 = 6500
-    else:
-        mintemp4 = int(mintemp4)
-        maxtemp4 = int(maxtemp4)
-    maxtemps.append(maxtemp4)
-    mintemps.append(mintemp4)
-    bulbs.append(config.get('lamp five', 'ip'))
-    maxtemp5 = config.get('lamp five', 'MaxColorTemperature')
-    mintemp5 = config.get('lamp five', 'MinColorTemperature')
-    if mintemp5 == '':
-        mintemp5 = 1700
-    if maxtemp5 == '':
-        maxtemp5 = 6500
-    else:
-        mintemp5 = int(mintemp5)
-        maxtemp5 = int(maxtemp5)
-    maxtemps.append(maxtemp5)
-    mintemps.append(mintemp5)
+    bulb_count = int(config.get('general', 'LampCount'))
+    for n in range(1, (bulb_count + 1)):
+        bulbs.append(config.get(str(n), 'ip'))
+        if config.get(str(n), 'MaxColorTemperature') == '':
+            maxtemps.append(6500)
+        else:
+            maxtemps.append(config.get(str(n), 'MaxColorTemperature'))
+        if config.get(str(n), 'MinColorTemperature') == '':
+            mintemps.append(1700)
+        else:
+            mintemps.append(config.get(str(n), 'MinColorTemperature'))
     print('Initializing...')
     for init_bulb in bulbs:
         if init_bulb != '':
