@@ -5,6 +5,11 @@ from bottle import run, post, request
 from yeelight import Bulb
 import configparser
 
+bulbs = []
+maxtemps = []
+mintemps = []
+check_state = True
+
 
 @post('/room_1')
 def room_handler():
@@ -12,121 +17,31 @@ def room_handler():
     if 'ct' in post_dict and 'bri' in post_dict:
         ct = int(post_dict['ct'])
         bri = int(float(post_dict['bri']) * 100)
-
-        if bulb1 != '':
-            bulb = Bulb(bulb1)
-            state = bulb.get_properties(requested_properties=['power'])
-            if 'off' in state['power']:
-                print('Powered off. Ignoring Yeelight at %s' % bulb1)
-            else:
-                print('Setting first lamp...')
-                bulb = Bulb(bulb1)
+        for (currentbulb, maxtemp, mintemp) in zip(bulbs, maxtemps, mintemps):
+            if currentbulb != '':
+                print('Sending command to Yeelight at', currentbulb)
+                bulb = Bulb(currentbulb)
                 bulb.set_brightness(bri)
-                print('Brightness set to %s percent' % (bri))
-                if mintemp1 < ct < maxtemp1:
+                print('Brightness set to', bri, 'percent')
+                if mintemp < ct < maxtemp:
                     bulb.set_color_temp(ct)
-                    print('Color temperature set to %s Kelvin' % ct)
+                    print('Color temperature set to', ct, 'Kelvin')
                 else:
-                    if ct > maxtemp1:
-                        bulb.set_color_temp(maxtemp1)
-                        print('Reached highest color temperature of %s Kelvin' % maxtemp1)
-                    if ct < mintemp1:
-                        bulb.set_color_temp(mintemp1)
-                        print('Reached lowest color temperature of %s Kelvin' % mintemp1)
-
-        if bulb2 != '':
-            bulb = Bulb(bulb2)
-            state = bulb.get_properties(requested_properties=['power'])
-            if 'off' in state['power']:
-                print('Powered off. Ignoring Yeelight at %s' % bulb2)
-            else:
-                print('Setting second lamp...')
-                bulb = Bulb(bulb2)
-                bulb.set_brightness(bri)
-                print('Brightness set to %s percent' % (bri))
-                if mintemp2 < ct < maxtemp2:
-                    bulb.set_color_temp(ct)
-                    print('Color temperature set to %s Kelvin' % ct)
-                else:
-                    if ct > maxtemp2:
-                        bulb.set_color_temp(maxtemp2)
-                        print('Reached highest color temperature of %s Kelvin' % maxtemp2)
-                    if ct < mintemp5:
-                        bulb.set_color_temp(mintemp2)
-                        print('Reached lowest color temperature of %s Kelvin' % mintemp2)
-
-        if bulb3 != '':
-            bulb = Bulb(bulb3)
-            state = bulb.get_properties(requested_properties=['power'])
-            if 'off' in state['power']:
-                print('Powered off. Ignoring Yeelight at %s' % bulb3)
-            else:
-                print('Setting third lamp...')
-                bulb = Bulb(bulb3)
-                bulb.set_brightness(bri)
-                print('Brightness set to %s percent' % (bri))
-                if mintemp3 < ct < maxtemp3:
-                    bulb.set_color_temp(ct)
-                    print('Color temperature set to %s Kelvin' % ct)
-                else:
-                    if ct > maxtemp3:
-                        bulb.set_color_temp(maxtemp3)
-                        print('Reached highest color temperature of %s Kelvin' % maxtemp3)
-                    if ct < mintemp3:
-                        bulb.set_color_temp(mintemp3)
-                        print('Reached lowest color temperature of %s Kelvin' % mintemp3)
-
-        if bulb4 != '':
-            bulb = Bulb(bulb4)
-            state = bulb.get_properties(requested_properties=['power'])
-            if 'off' in state['power']:
-                print('Powered off. Ignoring Yeelight at %s' % bulb4)
-            else:
-                print('Setting fourth lamp...')
-                bulb = Bulb(bulb4)
-                bulb.set_brightness(bri)
-                print('Brightness set to %s percent' % (bri))
-                if mintemp4 < ct < maxtemp4:
-                    bulb.set_color_temp(ct)
-                    print('Color temperature set to %s Kelvin' % ct)
-                else:
-                    if ct > maxtemp4:
-                        bulb.set_color_temp(maxtemp4)
-                        print('Reached highest color temperature of %s Kelvin' % maxtemp4)
-                    if ct < mintemp4:
-                        bulb.set_color_temp(mintemp4)
-                        print('Reached lowest color temperature of %s Kelvin' % mintemp4)
-
-        if bulb5 != '':
-            bulb = Bulb(bulb5)
-            state = bulb.get_properties(requested_properties=['power'])
-            if 'off' in state['power']:
-                print('Powered off. Ignoring Yeelight at %s' % bulb5)
-            else:
-                print('Setting fifth lamp...')
-                bulb = Bulb(bulb5)
-                bulb.set_brightness(bri)
-                print('Brightness set to %s percent' % (bri))
-                if mintemp5 < ct < maxtemp5:
-                    bulb.set_color_temp(ct)
-                    print('Color temperature set to %s Kelvin' % ct)
-                else:
-                    if ct > maxtemp5:
-                        bulb.set_color_temp(maxtemp5)
-                        print('Reached highest color temperature of %s Kelvin' % maxtemp5)
-                    if ct < mintemp5:
-                        bulb.set_color_temp(mintemp5)
-                        print('Reached lowest color temperature of %s Kelvin' % mintemp5)
+                    if ct > maxtemp:
+                        bulb.set_color_temp(maxtemp)
+                        print('Reached highest color temperature of', maxtemp, 'Kelvin')
+                    if ct < mintemp:
+                        bulb.set_color_temp(mntemp)
+                        print('Reached lowest color temperature of', mintemp, 'Kelvin')
 
 
 def main():
     print('Welcome to fluxee by davidramiro')
     print('Reading config...')
-    checkState = True
     config = configparser.ConfigParser()
     config.read('config.ini')
-    checkState = config.getboolean('general', 'CheckLampState')
-    bulb1 = config.get('lamp one', 'ip')
+    check_state = config.getboolean('general', 'CheckLampState')
+    bulbs.append(config.get('lamp one', 'ip'))
     maxtemp1 = config.get('lamp one', 'MaxColorTemperature')
     mintemp1 = config.get('lamp one', 'MinColorTemperature')
     if mintemp1 == '':
@@ -136,7 +51,9 @@ def main():
     else:
         mintemp1 = int(mintemp1)
         maxtemp1 = int(maxtemp1)
-    bulb2 = config.get('lamp two', 'ip')
+    maxtemps.append(maxtemp1)
+    mintemps.append(mintemp1)
+    bulbs.append(config.get('lamp two', 'ip'))
     maxtemp2 = config.get('lamp two', 'MaxColorTemperature')
     mintemp2 = config.get('lamp two', 'MinColorTemperature')
     if mintemp2 == '':
@@ -146,7 +63,9 @@ def main():
     else:
         mintemp2 = int(mintemp2)
         maxtemp2 = int(maxtemp2)
-    bulb3 = config.get('lamp three', 'ip')
+    maxtemps.append(maxtemp2)
+    mintemps.append(mintemp2)
+    bulbs.append(config.get('lamp three', 'ip'))
     maxtemp3 = config.get('lamp three', 'MaxColorTemperature')
     mintemp3 = config.get('lamp three', 'MinColorTemperature')
     if mintemp3 == '':
@@ -156,7 +75,9 @@ def main():
     else:
         mintemp3 = int(mintemp3)
         maxtemp3 = int(maxtemp3)
-    bulb4 = config.get('lamp four', 'ip')
+    maxtemps.append(maxtemp3)
+    mintemps.append(mintemp3)
+    bulbs.append(config.get('lamp four', 'ip'))
     maxtemp4 = config.get('lamp four', 'MaxColorTemperature')
     mintemp4 = config.get('lamp four', 'MinColorTemperature')
     if mintemp4 == '':
@@ -166,7 +87,9 @@ def main():
     else:
         mintemp4 = int(mintemp4)
         maxtemp4 = int(maxtemp4)
-    bulb5 = config.get('lamp five', 'ip')
+    maxtemps.append(maxtemp4)
+    mintemps.append(mintemp4)
+    bulbs.append(config.get('lamp five', 'ip'))
     maxtemp5 = config.get('lamp five', 'MaxColorTemperature')
     mintemp5 = config.get('lamp five', 'MinColorTemperature')
     if mintemp5 == '':
@@ -176,17 +99,19 @@ def main():
     else:
         mintemp5 = int(mintemp5)
         maxtemp5 = int(maxtemp5)
+    maxtemps.append(maxtemp5)
+    mintemps.append(mintemp5)
     print('Initializing...')
-    for bulbn in (bulb1, bulb2, bulb3, bulb4, bulb5):
-        if bulbn != '':
-            print('Initializing Yeelight at %s' % bulbn)
-            bulb = Bulb(bulbn)
-            if checkState is True:
+    for init_bulb in bulbs:
+        if init_bulb != '':
+            print('Initializing Yeelight at %s' % init_bulb)
+            bulb = Bulb(init_bulb)
+            if check_state == True:
                 state = bulb.get_properties(requested_properties=['power'])
                 if 'off' in state['power']:
-                    print('Powered off. Ignoring Yeelight at %s' % bulbn)
+                    print('Powered off. Ignoring Yeelight at %s' % init_bulb)
             else:
-                print('Turning on Yeelight at %s' % bulbn)
+                print('Turning on Yeelight at %s' % init_bulb)
                 bulb.turn_on()
                 bulb.set_brightness(100)
 
