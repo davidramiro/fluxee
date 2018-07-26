@@ -7,12 +7,13 @@ Setting up a light scene with Yeelight smart lamps corresponding to your f.lux d
 - Any Yeelight/Xiaomi/Mijia Wi-Fi lamp
 
 ## Usage
-* Clone the repo or download and extract it.
+* Windows: Download the [latest release](https://github.com/davidramiro/fluxee/releases)
+* Linux: Clone the repo or download and extract it.
 * Enable the [developer mode](https://www.yeelight.com/en_US/developer) (sometimes also called LAN mode) on your lamps in the Yeelight app.
 * Find out your lamp's IP addresses and put them into the config.ini file.
 * If you know your lamp's color temperature range you should set it in the config file aswell. If you don't know it, the script will use the widest range possible but you might get an error message. It will still work, though.
 * In f.lux settings enter `http://127.0.0.1:8080/room_1` in the bottom URL mask as shown [here](https://i.imgur.com/ybEWdIC.png).
-* Run `fluxee.py`.
+* Either run `fluxee.py` or `fluxee.exe`
 
 ## Important note
 
