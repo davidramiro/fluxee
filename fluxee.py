@@ -1,6 +1,4 @@
 import platform
-if platform.system() == "Windows":
-    import fcntl  # If run on a Windows machine, use an alternative fcntl module
 from bottle import run, post, request
 from yeelight import Bulb
 import configparser
