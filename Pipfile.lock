@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1643deb57eaf1aa553e04735da8cd25d7b64d6d47197f0321ac778ccc4a6fd95"
+            "sha256": "ae94560442796ad739cfea02f018844d2e8d56b15b8def30bd379b268c367cef"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "bottle": {
+            "hashes": [
+                "sha256:39b751aee0b167be8dffb63ca81b735bbf1dd0905b3bc42761efedee8f123355"
+            ],
+            "index": "pypi",
+            "version": "==0.12.13"
+        },
         "enum-compat": {
             "hashes": [
                 "sha256:939ceff18186a5762ae4db9fa7bfe017edbd03b66526b798dd8245394c8a4192"
