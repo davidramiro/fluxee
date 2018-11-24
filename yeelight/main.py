@@ -1,7 +1,7 @@
 import colorsys
-import fcntl
 import json
 import logging
+import os
 import socket
 import struct
 from enum import Enum
@@ -12,6 +12,12 @@ from .decorator import decorator
 from .enums import PowerMode
 from .flow import Flow
 from .utils import _clamp
+
+if os.name == "nt":
+    import win32api as fcntl
+else:
+    import fcntl
+
 
 try:
     from urllib.parse import urlparse
@@ -66,7 +72,7 @@ def _command(f, *args, **kw):
         # Add the effect parameters.
         params += [effect, duration]
         # Add power_mode parameter.
-        if method == "set_power" and params[0] == "on":
+        if method == "set_power" and params[0] == "on" and power_mode.value != PowerMode.LAST:
             params += [power_mode.value]
 
     result = self.send_command(method, params).get("result", [])
@@ -84,7 +90,9 @@ def get_ip_address(ifname):
 
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", ifname[:15]))[20:24])  # SIOCGIFADDR
+    return socket.inet_ntoa(
+        fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", bytes(ifname[:15], "utf-8")))[20:24]
+    )  # SIOCGIFADDR
 
 
 def discover_bulbs(timeout=2, interface=False):
@@ -103,7 +111,7 @@ def discover_bulbs(timeout=2, interface=False):
     :returns: A list of dictionaries, containing the ip, port and capabilities
               of each of the bulbs in the network.
     """
-    msg = "M-SEARCH * HTTP/1.1\r\n" "ST:wifi_bulb\r\n" 'MAN:"ssdp:discover"\r\n'
+    msg = "\r\n".join(["M-SEARCH * HTTP/1.1", "HOST: 239.255.255.250:1982", 'MAN: "ssdp:discover"', "ST: wifi_bulb"])
 
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -151,13 +159,15 @@ class BulbType(Enum):
     The bulb's type.
 
     This is either `White` (for monochrome bulbs), `Color` (for color bulbs), `WhiteTemp` (for white bulbs with
-    configurable color temperature), or `Unknown` if the properties have not been fetched yet.
+    configurable color temperature), `WhiteTempMood` for white bulbs with mood lighting (like the Galaxy LED ceiling
+    light), or `Unknown` if the properties have not been fetched yet.
     """
 
     Unknown = -1
     White = 0
     Color = 1
     WhiteTemp = 2
+    WhiteTempMood = 2
 
 
 class Bulb(object):
@@ -257,10 +267,13 @@ class Bulb(object):
         :rtype: yeelight.BulbType
         :return: The bulb's type.
         """
-        if not self._last_properties:
+        if not self._last_properties or any(name not in self.last_properties for name in ["ct", "rgb"]):
             return BulbType.Unknown
         if self.last_properties["rgb"] is None and self.last_properties["ct"]:
-            return BulbType.WhiteTemp
+            if self.last_properties["bg_power"] is not None:
+                return BulbType.WhiteTempMood
+            else:
+                return BulbType.WhiteTemp
         if all(
             name in self.last_properties and self.last_properties[name] is None for name in ["ct", "rgb", "hue", "sat"]
         ):
@@ -291,6 +304,10 @@ class Bulb(object):
             "flowing",
             "delayoff",
             "music_on",
+            "nl_br",
+            "active_mode",
+            "bg_power",
+            "bg_rgb",
             "name",
         ],
     ):
@@ -298,6 +315,10 @@ class Bulb(object):
         Retrieve and return the properties of the bulb.
 
         This method also updates ``last_properties`` when it is called.
+
+        The ``current_brightness`` property is calculated by the library (i.e. not returned
+        by the bulb), and indicates the current brightness of the lamp, aware of night light
+        mode. It is 0 if the lamp is off, and None if it is unknown.
 
         :param list requested_properties: The list of properties to request from the bulb.
                                           By default, this does not include ``flow_params``.
@@ -315,6 +336,16 @@ class Bulb(object):
         properties = [x if x else None for x in properties]
 
         self._last_properties = dict(zip(requested_properties, properties))
+
+        if self._last_properties.get("power") == "off":
+            cb = "0"
+        elif self._last_properties.get("active_mode") == "1":
+            # Nightlight mode.
+            cb = self._last_properties.get("nl_br")
+        else:
+            cb = self._last_properties.get("bright")
+        self._last_properties["current_brightness"] = cb
+
         return self._last_properties
 
     def send_command(self, method, params=None):
@@ -513,7 +544,7 @@ class Bulb(object):
 
         self.ensure_on()
 
-        return "start_cf", [flow.count * len(flow.transitions), flow.action.value, flow.expression]
+        return ("start_cf", [flow.count * len(flow.transitions), flow.action.value, flow.expression])
 
     @_command
     def stop_flow(self):
