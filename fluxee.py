@@ -13,24 +13,26 @@ check_state = True
 def room_handler():
     post_dict = request.query.decode()
     if 'ct' in post_dict and 'bri' in post_dict:
-        ct = int(post_dict['ct'])
-        bri = int(float(post_dict['bri']) * 100)
+        color_temp = int(post_dict['ct'])
+        brightness = int(round(float(post_dict['bri']) * 100))
         for (currentbulb, maxtemp, mintemp) in zip(bulbs, maxtemps, mintemps):
+            maxtemp = int(round(maxtemp))
+            mintemp = int(round(mintemp))
             if currentbulb != '':
                 print('Sending command to Yeelight at', currentbulb)
                 bulb = Bulb(currentbulb)
                 if static_brightness is False:
-                    bulb.set_brightness(bri)
-                    print('Brightness set to', bri, 'percent')
-                if int(mintemp) < ct < int(maxtemp):
-                    bulb.set_color_temp(ct)
-                    print('Color temperature set to', ct, 'Kelvin')
+                    bulb.set_brightness(brightness)
+                    print('Brightness set to', brightness, 'percent')
+                if mintemp < color_temp < maxtemp:
+                    bulb.set_color_temp(color_temp)
+                    print('Color temperature set to', color_temp, 'Kelvin')
                 else:
-                    if ct > int(maxtemp):
-                        bulb.set_color_temp(int(maxtemp))
+                    if color_temp > maxtemp:
+                        bulb.set_color_temp(maxtemp)
                         print('Reached highest color temperature of', maxtemp, 'Kelvin')
-                    if ct < int(mintemp):
-                        bulb.set_color_temp(int(mintemp))
+                    if color_temp < mintemp:
+                        bulb.set_color_temp(mintemp)
                         print('Reached lowest color temperature of', mintemp, 'Kelvin')
 
 
