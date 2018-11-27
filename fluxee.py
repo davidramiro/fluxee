@@ -16,8 +16,8 @@ def room_handler():
         color_temp = int(post_dict['ct'])
         brightness = int(round(float(post_dict['bri']) * 100))
         for (currentbulb, maxtemp, mintemp) in zip(bulbs, maxtemps, mintemps):
-            maxtemp = int(float(round(floatmaxtemp)))
-            mintemp = int(float(round(floatmintemp)))
+            maxtemp = int(round(float(maxtemp)))
+            mintemp = int(round(float(mintemp)))
             if currentbulb != '':
                 print('Sending command to Yeelight at', currentbulb)
                 bulb = Bulb(currentbulb)
