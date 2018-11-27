@@ -76,7 +76,7 @@ def main():
                 else:
                     bulb.set_brightness(100)
 
-    run(host='127.0.0.1', port=8080)
+    run(host='127.0.0.1', port=config.get('general', 'Port'))
     print('Thank you for using fluxee. Have a good one!')
 
 
