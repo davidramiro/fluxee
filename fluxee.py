@@ -28,10 +28,10 @@ def room_handler():
                     bulb.set_color_temp(color_temp)
                     print('Color temperature set to', color_temp, 'Kelvin')
                 else:
-                    if color_temp > maxtemp:
+                    if color_temp >= maxtemp:
                         bulb.set_color_temp(maxtemp)
                         print('Reached highest color temperature of', maxtemp, 'Kelvin')
-                    if color_temp < mintemp:
+                    if color_temp <= mintemp:
                         bulb.set_color_temp(mintemp)
                         print('Reached lowest color temperature of', mintemp, 'Kelvin')
 
