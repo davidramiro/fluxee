@@ -3,6 +3,7 @@ Setting up a light scene with Yeelight smart lamps corresponding to your f.lux d
 
 ## Prerequisites
 - Python 3
+- Pipenv
 - f.lux installed
 - Any Yeelight/Xiaomi/Mijia Wi-Fi lamp
 
