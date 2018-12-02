@@ -16,24 +16,27 @@ def room_handler():
         color_temp = int(post_dict['ct'])
         brightness = int(round(float(post_dict['bri']) * 100))
         for (currentbulb, maxtemp, mintemp) in zip(bulbs, maxtemps, mintemps):
-            maxtemp = int(round(float(maxtemp)))
-            mintemp = int(round(float(mintemp)))
-            if currentbulb != '':
-                print('Sending command to Yeelight at', currentbulb)
-                bulb = Bulb(currentbulb)
-                if static_brightness is False:
-                    bulb.set_brightness(brightness)
-                    print('Brightness set to', brightness, 'percent')
-                if mintemp < color_temp < maxtemp:
-                    bulb.set_color_temp(color_temp)
-                    print('Color temperature set to', color_temp, 'Kelvin')
-                else:
-                    if color_temp >= maxtemp:
-                        bulb.set_color_temp(maxtemp)
-                        print('Reached highest color temperature of', maxtemp, 'Kelvin')
-                    if color_temp <= mintemp:
-                        bulb.set_color_temp(mintemp)
-                        print('Reached lowest color temperature of', mintemp, 'Kelvin')
+            try:
+                maxtemp = int(round(float(maxtemp)))
+                mintemp = int(round(float(mintemp)))
+                if currentbulb != '':
+                    print('Sending command to Yeelight at', currentbulb)
+                    bulb = Bulb(currentbulb)
+                    if static_brightness is False:
+                        bulb.set_brightness(brightness)
+                        print('Brightness set to', brightness, 'percent')
+                    if mintemp < color_temp < maxtemp:
+                        bulb.set_color_temp(color_temp)
+                        print('Color temperature set to', color_temp, 'Kelvin')
+                    else:
+                        if color_temp >= maxtemp:
+                            bulb.set_color_temp(maxtemp)
+                            print('Reached highest color temperature of', maxtemp, 'Kelvin')
+                        if color_temp <= mintemp:
+                            bulb.set_color_temp(mintemp)
+                            print('Reached lowest color temperature of', mintemp, 'Kelvin')
+            except:
+                print('Failed to update bulb.')
 
 
 def main():
