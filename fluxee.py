@@ -2,6 +2,7 @@ import platform
 from bottle import run, post, request
 from yeelight import Bulb
 import configparser
+import traceback
 
 bulbs = []
 maxtemps = []
@@ -36,8 +37,7 @@ def room_handler():
                             bulb.set_color_temp(mintemp)
                             print('Reached lowest color temperature of', mintemp, 'Kelvin')
             except:
-                print('Failed to update bulb.')
-
+                traceback.print_exc()
 
 def main():
     print('Welcome to fluxee by davidramiro')
