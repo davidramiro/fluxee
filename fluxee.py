@@ -1,7 +1,7 @@
 from bottle import run, post, request
 import yeelight
-import configparser
 import traceback
+from yaml import load
 
 bulbs = []
 maxtemps = []
@@ -26,10 +26,10 @@ class Bulb(yeelight.Bulb):
             print('Brightness set to', brightness, 'percent')
 
     def set_color_temp(self, color_temp):
-        if color_temp > self.max_temp:
+        if color_temp >= self.max_temp:
             super().set_color_temp(self.max_temp)
             print('Reached highest color temperature of', self.max_temp, 'Kelvin')
-        elif color_temp < self.min_temp:
+        elif color_temp <= self.min_temp:
             super().set_color_temp(self.min_temp)
             print('Reached lowest color temperature of', self.min_temp, 'Kelvin')
         else:
@@ -55,41 +55,20 @@ def room_handler():
 def main():
     print('Welcome to fluxee by davidramiro')
     print('Reading config...')
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    global static_brightness
-    bulb_count = int(config.get('general', 'LampCount'))
-    check_state = config.getboolean('general', 'CheckLampState')
-    static_brightness = config.getboolean('general', 'StaticBrightness')
-    default_brightness = int(config.get('general', 'BrightnessValue'))
-    for n in range(1, (bulb_count + 1)):
-        ip = config.get(str(n), 'ip')
-        max_temp = 6500
-        min_temp = 1700
-        if config.get(str(n), 'MaxColorTemperature') == '':
-            pass
-        else:
-            max_temp = int(config.get(str(n), 'MaxColorTemperature'))
-        if config.get(str(n), 'MinColorTemperature') == '':
-            pass
-        else:
-            min_temp = int(config.get(str(n), 'MinColorTemperature'))
-        bulbs.append(Bulb(ip, min_temp, max_temp, static_brightness))
-    print('Initializing...')
-    for bulb in bulbs:
-            print('Initializing Yeelight at %s' % bulb._ip)
-            if check_state is True:
-                state = bulb.get_properties(requested_properties=['power'])
-                if 'off' in state['power']:
-                    print('Powered off. Ignoring Yeelight at %s' % bulb._ip)
-                elif static_brightness is True:
-                    print('Changing brightness of', bulb._ip)
-                    bulb.set_brightness(default_brightness)
-            else:
-                print('Turning on Yeelight at %s' % bulb.up)
-                bulb.turn_on()
+    with open('config.yaml', 'r') as config_file:
+        config = load(config_file)
+        print('Initializing...')
+        for bulb_config in config["bulbs"]:
+            ip = bulb_config["ip"]
+            static_brightness = bulb_config.get("static_brightness")
+            min_temp = bulb_config.get("min_temp")
+            max_temp = bulb_config.get("max_temp")
 
-    run(host=config.get('general', 'Host'), port=config.get('general', 'Port'))
+            print('Initializing Yeelight at %s' % ip)
+            bulb = Bulb(ip, min_temp, max_temp, static_brightness)
+            bulbs.append(bulb)
+
+        run(host=config["host"], port=config["port"])
     print('Thank you for using fluxee. Have a good one!')
 
 
