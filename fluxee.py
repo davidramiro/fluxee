@@ -1,7 +1,7 @@
 from bottle import run, post, request
 import yeelight
 import traceback
-from yaml import load
+from yaml import load, Loader
 
 bulbs = []
 maxtemps = []
@@ -56,7 +56,7 @@ def main():
     print('Welcome to fluxee by davidramiro')
     print('Reading config...')
     with open('config.yaml', 'r') as config_file:
-        config = load(config_file)
+        config = load(config_file, Loader=Loader)
         print('Initializing...')
         for bulb_config in config["bulbs"]:
             ip = bulb_config["ip"]
