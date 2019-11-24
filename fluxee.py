@@ -11,10 +11,11 @@ check_state = True
 
 class Bulb(yeelight.Bulb):
 
-    def __init__(self, ip, min_temp=1700, max_temp=6500, static_brightness=None):
+    def __init__(self, ip, min_temp=1700, max_temp=6500, static_brightness=None, brightness_offset=0):
         self.min_temp = min_temp
         self.max_temp = max_temp
         self.static_brightness = static_brightness
+        self.brightness_offset = brightness_offset
         super().__init__(ip)
 
     def set_brightness(self, brightness):
@@ -22,8 +23,8 @@ class Bulb(yeelight.Bulb):
             super().set_brightness(self.static_brightness)
             print('Static brightness set to', self.static_brightness, 'percent')
         else:
-            super().set_brightness(brightness)
-            print('Brightness set to', brightness, 'percent')
+            super().set_brightness(brightness + self.brightness_offset)
+            print('Brightness set to', brightness + self.brightness_offset, 'percent')
 
     def set_color_temp(self, color_temp):
         if color_temp >= self.max_temp:
@@ -61,11 +62,12 @@ def main():
         for bulb_config in config["bulbs"]:
             ip = bulb_config["ip"]
             static_brightness = bulb_config.get("static_brightness")
+            brightness_offset = bulb_config.get("brightness_offset", 0)
             min_temp = bulb_config.get("min_temp")
             max_temp = bulb_config.get("max_temp")
 
             print('Initializing Yeelight at %s' % ip)
-            bulb = Bulb(ip, min_temp, max_temp, static_brightness)
+            bulb = Bulb(ip, min_temp, max_temp, static_brightness, brightness_offset)
             bulbs.append(bulb)
 
         run(host=config["host"], port=config["port"])
