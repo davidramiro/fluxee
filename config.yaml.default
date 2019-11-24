@@ -11,7 +11,7 @@ bulbs:
       min_temp: 1700
       max_temp: 6500
       static_brightness: 50 
-    - ip: 192.168.0.103
+    - ip: 192.168.0.104
       min_temp: 1700
       max_temp: 6500
       brightness_offset: -10
