@@ -4,10 +4,6 @@ import traceback
 from yaml import load, Loader
 
 bulbs = []
-maxtemps = []
-mintemps = []
-check_state = True
-
 
 class Bulb(yeelight.Bulb):
 
