@@ -27,7 +27,7 @@ Some people seem to have issues getting the script to work flawlessly with the X
 ## Credits
 Thanks to [ekzi](https://github.com/mikhail-ekzi) for providing the idea and basis behind this project!
 
-Gratefully using the [Yeelight python library](https://github.com/skorokithakis/python-yeelight/) by Stavros Korokithakis.  
+Gratefully using the [Yeelight python library](https://gitlab.com/stavros/python-yeelight) by Stavros Korokithakis.  
 Copyright (c) 2016, Stavros Korokithakis  
 All rights reserved.
 
