@@ -33,35 +33,28 @@ class Bulb(yeelight.Bulb):
             super().set_color_temp(color_temp)
             print(f'Color temperature set to {color_temp} Kelvin')
 
+def send_command(command, value=None):
+        for bulb in bulbs:
+            try:
+                print(f'Sending {command} to Yeelight at {bulb._ip}')
+                getattr(bulb, command)(value)
+            except Exception:
+                traceback.print_exc()
+
 
 @post('/room_1')
 def room_handler():
     post_dict = request.query.decode()
     if 'ct' in post_dict:
         color_temp = int(post_dict['ct'])
-        for bulb in bulbs:
-            try:
-                print(f'Sending set_color_temp to Yeelight at {bulb._ip}')
-                bulb.set_color_temp(color_temp)
-            except Exception:
-                traceback.print_exc()
+        send_command('set_color_temp', color_temp)
 
     if 'bri' in post_dict:
         brightness = int(round(float(post_dict['bri']) * 100))
-        for bulb in bulbs:
-            try:
-                print(f'Sending set_brightness to Yeelight at {bulb._ip}')
-                bulb.set_brightness(brightness)
-            except Exception:
-                traceback.print_exc()
+        send_command('set_brightness', brightness)
 
     if 'on' in post_dict:
-        for bulb in bulbs:
-            try:
-                print(f'Sending turn_on to Yeelight at {bulb._ip}')
-                bulb.turn_on()
-            except Exception:
-                traceback.print_exc()
+        send_command('turn_on')
 
 
 def main():
