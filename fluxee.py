@@ -48,6 +48,15 @@ def room_handler():
             except Exception:
                 traceback.print_exc()
 
+    if 'on' in post_dict:
+        for bulb in bulbs:
+            try:
+                print('Sending command to Yeelight at', bulb._ip)
+                bulb.turn_on()
+            except Exception:
+                traceback.print_exc()
+
+
 
 def main():
     print('Welcome to fluxee by davidramiro')
