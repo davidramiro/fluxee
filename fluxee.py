@@ -34,12 +34,12 @@ class Bulb(yeelight.Bulb):
             print(f'Color temperature set to {color_temp} Kelvin')
 
 def send_command(command, value=None):
-        for bulb in bulbs:
-            try:
-                print(f'Sending {command} to Yeelight at {bulb._ip}')
-                getattr(bulb, command)(value)
-            except Exception:
-                traceback.print_exc()
+    for bulb in bulbs:
+        try:
+            print(f'Sending {command} to Yeelight at {bulb._ip}')
+            getattr(bulb, command)(value)
+        except Exception:
+            traceback.print_exc()
 
 
 @post('/room_1')
