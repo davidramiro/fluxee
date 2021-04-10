@@ -17,21 +17,21 @@ class Bulb(yeelight.Bulb):
     def set_brightness(self, brightness):
         if self.static_brightness:
             super().set_brightness(self.static_brightness)
-            print('Static brightness set to', self.static_brightness, 'percent')
+            print(f'Static brightness set to {self.static_brightness}%')
         else:
             super().set_brightness(brightness + self.brightness_offset)
-            print('Brightness set to', brightness + self.brightness_offset, 'percent')
+            print(f'Brightness set to {brightness + self.brightness_offset}%')
 
     def set_color_temp(self, color_temp):
         if color_temp >= self.max_temp:
             super().set_color_temp(self.max_temp)
-            print('Reached highest color temperature of', self.max_temp, 'Kelvin')
+            print(f'Reached maximum color temperature of {self.max_temp} Kelvin')
         elif color_temp <= self.min_temp:
             super().set_color_temp(self.min_temp)
-            print('Reached lowest color temperature of', self.min_temp, 'Kelvin')
+            print(f'Reached minimum color temperature of {self.min_temp} Kelvin')
         else:
             super().set_color_temp(color_temp)
-            print('Color temperature set to', color_temp, 'Kelvin')
+            print(f'Color temperature set to {color_temp} Kelvin')
 
 
 @post('/room_1')
@@ -41,7 +41,7 @@ def room_handler():
         color_temp = int(post_dict['ct'])
         for bulb in bulbs:
             try:
-                print('Sending set_color_temp to Yeelight at', bulb._ip)
+                print(f'Sending set_color_temp to Yeelight at {bulb._ip}')
                 bulb.set_color_temp(color_temp)
             except Exception:
                 traceback.print_exc()
@@ -50,7 +50,7 @@ def room_handler():
         brightness = int(round(float(post_dict['bri']) * 100))
         for bulb in bulbs:
             try:
-                print('Sending set_brightness to Yeelight at', bulb._ip)
+                print(f'Sending set_brightness to Yeelight at {bulb._ip}')
                 bulb.set_brightness(brightness)
             except Exception:
                 traceback.print_exc()
@@ -58,11 +58,10 @@ def room_handler():
     if 'on' in post_dict:
         for bulb in bulbs:
             try:
-                print('Sending turn_on to Yeelight at', bulb._ip)
+                print(f'Sending turn_on to Yeelight at {bulb._ip}')
                 bulb.turn_on()
             except Exception:
                 traceback.print_exc()
-
 
 
 def main():
@@ -78,7 +77,7 @@ def main():
             min_temp = bulb_config.get("min_temp")
             max_temp = bulb_config.get("max_temp")
 
-            print('Initializing Yeelight at %s' % ip)
+            print(f'Initializing Yeelight at {ip}')
             bulb = Bulb(ip, min_temp, max_temp, static_brightness, brightness_offset)
             bulbs.append(bulb)
 
@@ -88,3 +87,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
