@@ -4,6 +4,7 @@ import traceback
 from yaml import load, Loader
 
 bulbs = []
+config = None
 
 class Bulb(yeelight.Bulb):
 
@@ -49,7 +50,7 @@ def room_handler():
         color_temp = int(post_dict['ct'])
         send_command('set_color_temp', color_temp)
 
-    if 'bri' in post_dict:
+    if 'bri' in post_dict and config['brightness']:
         brightness = int(round(float(post_dict['bri']) * 100))
         send_command('set_brightness', brightness)
 
@@ -59,22 +60,25 @@ def room_handler():
 
 def main():
     print('Welcome to fluxee by davidramiro')
+
     print('Reading config...')
     with open('config.yaml', 'r') as config_file:
+        global config
         config = load(config_file, Loader=Loader)
-        print('Initializing...')
-        for bulb_config in config["bulbs"]:
-            ip = bulb_config["ip"]
-            static_brightness = bulb_config.get("static_brightness")
-            brightness_offset = bulb_config.get("brightness_offset", 0)
-            min_temp = bulb_config.get("min_temp")
-            max_temp = bulb_config.get("max_temp")
 
-            print(f'Initializing Yeelight at {ip}')
-            bulb = Bulb(ip, min_temp, max_temp, static_brightness, brightness_offset)
-            bulbs.append(bulb)
+    print('Initializing...')
+    for bulb_config in config["bulbs"]:
+        ip = bulb_config["ip"]
+        static_brightness = bulb_config.get("static_brightness")
+        brightness_offset = bulb_config.get("brightness_offset", 0)
+        min_temp = bulb_config.get("min_temp")
+        max_temp = bulb_config.get("max_temp")
 
-        run(host=config["host"], port=config["port"])
+        print(f'Initializing Yeelight at {ip}')
+        bulb = Bulb(ip, min_temp, max_temp, static_brightness, brightness_offset)
+        bulbs.append(bulb)
+
+    run(host=config["host"], port=config["port"])
     print('Thank you for using fluxee. Have a good one!')
 
 
