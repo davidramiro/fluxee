@@ -57,6 +57,9 @@ def room_handler():
     if 'on' in post_dict:
         send_command('turn_on')
 
+    if 'off' in post_dict:
+        send_command('turn_off')
+
 
 def main():
     print('Welcome to fluxee by davidramiro')
