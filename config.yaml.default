@@ -1,0 +1,18 @@
+host: 0.0.0.0
+port: 8080
+brightness: true
+bulbs:
+    - ip: 192.168.0.101
+      min_temp: 1700
+      max_temp: 6500
+    - ip: 192.168.0.102
+      min_temp: 1700
+      max_temp: 6500
+    - ip: 192.168.0.103
+      min_temp: 1700
+      max_temp: 6500
+      static_brightness: 50 
+    - ip: 192.168.0.104
+      min_temp: 1700
+      max_temp: 6500
+      brightness_offset: -10
